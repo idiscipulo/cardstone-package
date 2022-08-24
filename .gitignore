@@ -1,2 +1,5 @@
 # Compiled Files
 *.py[c]
+
+# Local files
+*.bat

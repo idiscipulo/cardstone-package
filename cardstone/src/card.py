@@ -29,25 +29,13 @@ class Card:
         self.faction = faction
 
         self.usable = False
-        self.selected = True
 
         self.flash = False
         self.flash_speed = 2
         self.flash_tracker = 0
-        self.flash_color = None
-    
-    def update(self, colors):
-        if self.usable:
-            self.flash = True
-            self.flash_color = colors.GREEN_BACK
-        elif self.selected:
-            self.flash = True
-            self.flash_color = colors.WHITE_BACK
-        else:
-            self.flash = False
         
     def draw(self, y:int, x:int, scr, colors):
-        draw.rectangle(y + config.OUTLINE_OFFSET_Y, x + config.OUTLINE_OFFSET_X, config.CARD_WIDTH, config.CARD_HEIGHT, scr, colors.BLUE_BACK)
+        draw.rectangle(y + config.OUTLINE_OFFSET_Y, x + config.OUTLINE_OFFSET_X, config.CARD_WIDTH, config.CARD_HEIGHT, scr, colors.GREY_BACK)
 
         text_y = y + config.TEXT_OFFSET_Y
         text_x = x + config.TEXT_OFFSET_X
@@ -72,6 +60,12 @@ class Card:
 
             scr.addstr(mana_y + config.OUTLINE_OFFSET_Y, mana_x + config.OUTLINE_OFFSET_X, mana_s, mana_c)
 
+        if self.faction is not None:
+            faction_s = f"{self.faction:^{config.CARD_WIDTH}}"
+            faction_y = y + config.FACTION_OFFSET_Y
+
+            scr.addstr(faction_y + config.OUTLINE_OFFSET_Y, x + config.OUTLINE_OFFSET_X, faction_s, colors.GREY_BACK) # GREY_BACK makes white text on grey back
+
         if self.flash:
             self.flash_tracker = (self.flash_tracker + 1) % 1000000
 
@@ -79,15 +73,15 @@ class Card:
                 tb_s = " " * (config.CARD_WIDTH + 2)
                 bot_y = config.CARD_HEIGHT + 1
 
-                scr.addstr(y, x, tb_s, self.flash_color)
-                scr.addstr(y + bot_y, x, tb_s, self.flash_color)
+                scr.addstr(y, x, tb_s, colors.GREEN_BACK)
+                scr.addstr(y + bot_y, x, tb_s, colors.GREEN_BACK)
 
                 for yy in range(config.CARD_HEIGHT):
                     lr_y = yy + 1
                     right_x = x + config.CARD_WIDTH + 1
 
-                    scr.addstr(lr_y, x, " ", self.flash_color)
-                    scr.addstr(lr_y, right_x, " ", self.flash_color)
+                    scr.addstr(lr_y, x, " ", colors.GREEN_BACK)
+                    scr.addstr(lr_y, right_x, " ", colors.GREEN_BACK)
 
 
 class Minion(Card):
