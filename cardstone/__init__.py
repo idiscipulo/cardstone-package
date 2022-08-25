@@ -2,8 +2,8 @@ import config
 import curses
 import os
 
-from src.card import Minion
 from src import draw
+from src.game import Game
 from time import sleep, time
 
 class ColorFrame:
@@ -18,6 +18,7 @@ def main(scr):
     curses.init_pair(4, curses.COLOR_GREEN, curses.COLOR_WHITE)
     curses.init_pair(5, curses.COLOR_WHITE, curses.COLOR_GREEN)
     curses.init_pair(6, curses.COLOR_WHITE, curses.COLOR_WHITE)
+    curses.init_pair(7, curses.COLOR_WHITE, curses.COLOR_BLACK)
 
     colors = ColorFrame()
     colors.BLACK_TEXT = curses.color_pair(1)
@@ -27,15 +28,11 @@ def main(scr):
     colors.WHITE_BACK = curses.color_pair(6)
     colors.GREY_BACK = curses.color_pair(1) | curses.A_STANDOUT # black text, white background, standout -> grey background
     colors.GREEN_BACK = curses.color_pair(5)
+    colors.BLACK_BACK = curses.color_pair(7)
 
-    ###
-    # TEMP STUFF
-    ###
-    card_1 = Minion(2, 9, "Practice Dummy", 10, "Murloc")
-    card_2 = Minion(2, 9, "Practice Dummy", 10, "Murloc")
-    card_3 = Minion(2, 9, "Practice Dummy", 10, "Murloc")
-    card_4 = Minion(2, 9, "Practice Dummy", 10, "Murloc")
-    card_5 = Minion(2, 9, "Practice Dummy", 10, "Murloc")
+    scr.bkgd(colors.BLACK_BACK) # set a white background
+
+    game = Game(scr, colors)
 
     while True:
         s_time = time()
@@ -46,11 +43,7 @@ def main(scr):
         if key == 27:
             break
 
-        card_1.draw(0, 0, scr, colors)
-        card_2.draw(0, config.CARD_SPACE * 1, scr, colors)
-        card_3.draw(0, config.CARD_SPACE * 2, scr, colors)
-        card_4.draw(0, config.CARD_SPACE * 3, scr, colors)
-        card_5.draw(0, config.CARD_SPACE * 4, scr, colors)
+        game.draw()
 
         scr.refresh()
 

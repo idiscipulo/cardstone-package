@@ -61,7 +61,8 @@ class Card:
             scr.addstr(mana_y + config.OUTLINE_OFFSET_Y, mana_x + config.OUTLINE_OFFSET_X, mana_s, mana_c)
 
         if self.faction is not None:
-            faction_s = f"{self.faction:^{config.CARD_WIDTH}}"
+            faction_ss = f"-{self.faction}-"
+            faction_s = f"{faction_ss:^{config.CARD_WIDTH}}"
             faction_y = y + config.FACTION_OFFSET_Y
 
             scr.addstr(faction_y + config.OUTLINE_OFFSET_Y, x + config.OUTLINE_OFFSET_X, faction_s, colors.GREY_BACK) # GREY_BACK makes white text on grey back
@@ -120,3 +121,10 @@ class Minion(Card):
             health_x = x + health_offset_x
 
             scr.addstr(health_y + config.OUTLINE_OFFSET_Y, health_x + config.OUTLINE_OFFSET_X, health_s, health_c)
+
+# Minions
+MINION_one = Minion(1, 1, "One", 1, None)
+MINION_two = Minion(2, 2, "Two", 2, None)
+MINION_three = Minion(3, 3, "Three", 3, None)
+MINION_four = Minion(4, 4, "Four", 4, None)
+MINION_five = Minion(5, 5, "Five", 5, None)
