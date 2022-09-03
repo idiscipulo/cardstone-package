@@ -9,10 +9,13 @@ from time import sleep, time
 class ColorFrame:
     pass
 
-def main(scr):
-    curses.curs_set(False)
-    scr.nodelay(True)
+def comp_actual_fps(s_time):
+    actual_time = max(0.00001, time() - s_time)
+    actual_fps = 1 / actual_time
 
+    return int(actual_fps)
+
+def init_colors():
     curses.init_pair(1, curses.COLOR_BLACK, curses.COLOR_WHITE)
     curses.init_pair(3, curses.COLOR_RED, curses.COLOR_WHITE)
     curses.init_pair(4, curses.COLOR_GREEN, curses.COLOR_WHITE)
@@ -30,25 +33,55 @@ def main(scr):
     colors.GREEN_BACK = curses.color_pair(5)
     colors.BLACK_BACK = curses.color_pair(7)
 
+    return colors
+
+def main(scr):
+    curses.curs_set(False)
+    scr.nodelay(True)
+
+    colors = init_colors()
+
     scr.bkgd(colors.BLACK_BACK) # set a white background
 
     game = Game(scr, colors)
+    
+    anim_time = time()
 
     while True:
         s_time = time()
 
-        scr.clear()
-
+        # inputs
         key = scr.getch()
-        if key == 27:
+        if key == 9: # tab
+            config.SHOW_DEV_STATS = not config.SHOW_DEV_STATS
+        elif key == 27: # escape
             break
 
-        game.draw()
+        if key != -1:
+            k = key
 
-        scr.refresh()
+        # update at the FPS (60)
+        game.update(key)
 
+        # draw at the animation FPS (12)
+        if s_time - anim_time > config.ANIM_FPS_RATIO:
+            scr.clear()
+
+            game.draw(colors)
+
+            scr.refresh()
+
+            anim_time = s_time
+        
         delay = max(0, config.FPS_RATIO - (time() - s_time))
+
         sleep(delay)
+
+        if config.SHOW_DEV_STATS:
+            actual_fps = comp_actual_fps(s_time)
+            scr.addstr(0, 0, f"= Developer Stats =")
+            scr.addstr(1, 0, f"fps:      {actual_fps}")
+            scr.addstr(2, 0, f"last_key: {k}")
 
 if __name__ == "__main__":
     terminal_size = os.get_terminal_size()

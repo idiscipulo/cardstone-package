@@ -1,4 +1,5 @@
 import config
+import copy
 import curses
 import math
 
@@ -33,6 +34,10 @@ class Card:
         self.flash = False
         self.flash_speed = 2
         self.flash_tracker = 0
+
+    def get_generator(self):
+        while True:
+            yield copy.deepcopy(self)
         
     def draw(self, y:int, x:int, scr, colors):
         draw.rectangle(y + config.OUTLINE_OFFSET_Y, x + config.OUTLINE_OFFSET_X, config.CARD_WIDTH, config.CARD_HEIGHT, scr, colors.GREY_BACK)
@@ -72,13 +77,13 @@ class Card:
 
             if self.flash_tracker & self.flash_speed:
                 tb_s = " " * (config.CARD_WIDTH + 2)
-                bot_y = config.CARD_HEIGHT + 1
+                bot_y = y + config.CARD_HEIGHT + 1
 
                 scr.addstr(y, x, tb_s, colors.GREEN_BACK)
-                scr.addstr(y + bot_y, x, tb_s, colors.GREEN_BACK)
+                scr.addstr(bot_y, x, tb_s, colors.GREEN_BACK)
 
                 for yy in range(config.CARD_HEIGHT):
-                    lr_y = yy + 1
+                    lr_y = y + yy + 1
                     right_x = x + config.CARD_WIDTH + 1
 
                     scr.addstr(lr_y, x, " ", colors.GREEN_BACK)
@@ -123,8 +128,8 @@ class Minion(Card):
             scr.addstr(health_y + config.OUTLINE_OFFSET_Y, health_x + config.OUTLINE_OFFSET_X, health_s, health_c)
 
 # Minions
-MINION_one = Minion(1, 1, "One", 1, None)
-MINION_two = Minion(2, 2, "Two", 2, None)
-MINION_three = Minion(3, 3, "Three", 3, None)
-MINION_four = Minion(4, 4, "Four", 4, None)
-MINION_five = Minion(5, 5, "Five", 5, None)
+m_One_gen = Minion(1, 1, "One", 1, None).get_generator()
+m_Two_gen = Minion(2, 2, "Two", 2, None).get_generator()
+m_Three_gen = Minion(3, 3, "Three", 3, None).get_generator()
+m_Four_gen = Minion(4, 4, "Four", 4, None).get_generator()
+m_Five_gen = Minion(5, 5, "Five", 5, None).get_generator()
