@@ -11,9 +11,17 @@ ENTER = 10
 
 class Game:
     """
-
     states:
-        - 
+        - MULLIGAN_START        -- <animation> draw starting hand, [text] "Start Game"
+        - MULLIGAN_SELECT       -- (choice) select cards to redraw, [text] "Choose cards to redraw"
+        - MULLIGAN_REDRAW       -- <animation> swapping cards, <animation> lower cards from middle to back row, [text] "Player X, Your Turn"
+        - PLAYER_START          -- <animation> draw card
+        - PLAYER_TURN           -- (choice) select cards to play or attack with
+        - CARD_EFFECTS          -- <animation> show card effects
+        - ENEMY_START           -- <animation> draw card, [text] "Enemy X, Your Turn"
+        - ENEMY_TURN            -- {process} waiting for AI / opposing player input
+        - PLAYER_WIN            -- <animation> you win animation
+        - ENEMY_WIN             -- <animation> you lose animation
     """
 
     def __init__(self, scr, colors):
@@ -31,9 +39,6 @@ class Game:
         self.player.fill_board()
         self.enemy.fill_board()
 
-    def draw_mana(y:int, x:int, cur_mana:int, max_mana:int):
-        draw.rectangle(y + config.MANA_BAR_OFFSET_Y, x + config.MANA_BAR_OFFSET_X, config.MANA_BAR_WIDHT, config.MANA_BAR_HEIGHT, self.scr, colors.GREY_BACK)
-    
     def update(self, key:int):
         pass
 
@@ -75,19 +80,12 @@ class Game:
         else:
             deck_text_color = colors.BLACK_TEXT
 
-        dt_y = config.PLAYER_DECK_TEXT_Y
-        dt_x = config.DECK_TEXT_X
-        dt_ss = "DECK"
-        dt_s = f"{dt_ss:^{config.DECK_TEXT_WIDTH}}"
+        dt_y = config.PLAYER_BACK_Y
+        dt_x = config.DECK_X
+        dt_ss = f"DECK [{len(self.player.deck)}]"
+        dt_s = f"{dt_ss:^{config.CARD_WIDTH}}"
 
-        self.scr.addstr(dt_y + config.OUTLINE_OFFSET_Y, dt_x + config.OUTLINE_OFFSET_X, dt_s, deck_text_color)
-
-        dtc_y = config.PLAYER_DECK_COUNT_Y
-        dtc_x = config.DECK_COUNT_X
-        dtc_ss = f"{len(self.player.deck)}"
-        dtc_s = f"{dtc_ss:^{config.DECK_COUNT_WIDTH}}"
-
-        self.scr.addstr(dtc_y + config.OUTLINE_OFFSET_Y, dtc_x + config.OUTLINE_OFFSET_X, dtc_s, deck_text_color)
+        self.scr.addstr(dt_y, dt_x + config.OUTLINE_OFFSET_X, dt_s, colors.WHITE_TEXT)
 
         ##########
         # ENEMY #
@@ -115,21 +113,9 @@ class Game:
 
         draw.rectangle(dy + config.OUTLINE_OFFSET_Y, dx + config.OUTLINE_OFFSET_X, config.CARD_WIDTH, config.CARD_HEIGHT, self.scr, self.enemy.card_back)
 
-        if self.enemy.card_back in [colors.WHITE_BACK]:
-            deck_text_color = colors.WHITE_TEXT
-        else:
-            deck_text_color = colors.BLACK_TEXT
+        dt_y = config.ENEMY_BACK_Y
+        dt_x = config.DECK_X
+        dt_ss = f"DECK [{len(self.player.deck)}]"
+        dt_s = f"{dt_ss:^{config.CARD_WIDTH}}"
 
-        dt_y = config.ENEMY_DECK_TEXT_Y
-        dt_x = config.DECK_TEXT_X
-        dt_ss = "DECK"
-        dt_s = f"{dt_ss:^{config.DECK_TEXT_WIDTH}}"
-
-        self.scr.addstr(dt_y + config.OUTLINE_OFFSET_Y, dt_x + config.OUTLINE_OFFSET_X, dt_s, deck_text_color)
-
-        dtc_y = config.ENEMY_DECK_COUNT_Y
-        dtc_x = config.DECK_COUNT_X
-        dtc_ss = f"{len(self.enemy.deck)}"
-        dtc_s = f"{dtc_ss:^{config.DECK_COUNT_WIDTH}}"
-
-        self.scr.addstr(dtc_y + config.OUTLINE_OFFSET_Y, dtc_x + config.OUTLINE_OFFSET_X, dtc_s, deck_text_color)
+        self.scr.addstr(dt_y, dt_x + config.OUTLINE_OFFSET_X, dt_s, colors.WHITE_TEXT)
