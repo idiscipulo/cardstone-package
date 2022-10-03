@@ -1,5 +1,6 @@
 import random
 
+from src.card import Deck
 from src.card import m_One_gen, m_Two_gen, m_Three_gen, m_Four_gen, m_Five_gen
 
 class Player:
@@ -29,7 +30,8 @@ class Player:
 
         self.board = []
         self.hand = []
-        self.graveyard = []
+
+        self.deck_card = Deck()
         
         self.cur_mana = 0
         self.max_mana = 0
@@ -53,5 +55,5 @@ class Player:
 
     def fill_board(self):
         """Testing Only"""
-        while len(self.board) < 4:
+        while len(self.board) < 2:
             self.board.append(self.deck.pop(0))

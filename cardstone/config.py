@@ -1,5 +1,5 @@
 # Card configs
-CARD_WIDTH          = 20
+CARD_WIDTH                  = 20
 CARD_HEIGHT                 = 7
 OUTLINE_OFFSET_Y            = 1
 OUTLINE_OFFSET_X            = 1
@@ -10,6 +10,7 @@ TEXT_OFFSET_X               = 1
 TEXT_WIDTH                  = CARD_WIDTH - (TEXT_OFFSET_X * 2)
 TEXT_HEIGHT                 = 3
 FACTION_OFFSET_Y            = 5
+DECK_OFFSET_Y               = 3
 
 # Minion(Card) configs
 STAT_OFFSET_Y               = CARD_HEIGHT - 1
@@ -18,9 +19,9 @@ STAT_OFFSET_Y               = CARD_HEIGHT - 1
 CARD_SPACE_PADDING          = 2
 CARD_SPACE                  = CARD_WIDTH + (CARD_SPACE_PADDING * 2)
 PLAYER_BACK_Y               = ((CARD_HEIGHT + CARD_SPACE_PADDING) * 3) + (9) # (hand/board/board) + (center)
-PLAYER_FRONT_Y              = ((CARD_HEIGHT + CARD_SPACE_PADDING) * 2) + (9) # (hand/board/board) + (center)
+PLAYER_FRONT_Y              = ((CARD_HEIGHT + CARD_SPACE_PADDING) * 2) + (8) # (hand/board/board) + (center)
 ENEMY_BACK_Y                = 0
-ENEMY_FRONT_Y               = CARD_HEIGHT + CARD_SPACE_PADDING
+ENEMY_FRONT_Y               = CARD_HEIGHT + CARD_SPACE_PADDING + 1
 DECK_X                      = (CARD_SPACE * 5) + 4 + CARD_SPACE_PADDING # (hand) + (spacing) + (padding)
 MANA_BAR_OFFSET_Y = 2
 MANA_BAR_OFFSET_X = 2
@@ -35,3 +36,10 @@ ANIM_FPS_RATIO              = 1 / ANIM_FPS
 
 # setting configs
 SHOW_DEV_STATS              = False
+
+# Game configs cont. 
+# ! this is down here for a reason
+# ! don't move
+CENTER_Y                    = int(HEIGHT / 2)
+MID_TEXT_PADDING            = 50
+MID_TEXT_WIDTH              = WIDTH - (MID_TEXT_PADDING * 2)

@@ -29,11 +29,30 @@ class Card:
         self.cur_mana = mana
         self.faction = faction
 
-        self.usable = False
+        self.selected = False
+        self.select_speed = 2
+        self.select_tracker = 0
 
-        self.flash = False
-        self.flash_speed = 2
-        self.flash_tracker = 0
+        self.usable = False
+        self.usable_bonus = False
+        self.u_y = 0
+        self.u_x = 0
+        self.section = 0
+
+
+    def set_selected(self, val:bool):
+        self.selected = val
+
+    def set_usable(self, val:bool):
+        self.usable = val
+
+        if not val:
+            self.usable_bonus = val
+
+    def set_usable_bonus(self, val:bool):
+        self.usable = val
+        self.usable_bonus = val
+
 
     def get_generator(self):
         while True:
@@ -70,12 +89,13 @@ class Card:
             faction_s = f"{faction_ss:^{config.CARD_WIDTH}}"
             faction_y = y + config.FACTION_OFFSET_Y
 
-            scr.addstr(faction_y + config.OUTLINE_OFFSET_Y, x + config.OUTLINE_OFFSET_X, faction_s, colors.GREY_BACK) # GREY_BACK makes white text on grey back
+            scr.addstr(faction_y + config.OUTLINE_OFFSET_Y, x + config.OUTLINE_OFFSET_X, faction_s, colors.GREY_BACK)
+            
 
-        if self.flash:
-            self.flash_tracker = (self.flash_tracker + 1) % 1000000
+        if self.selected:
+            self.select_tracker = (self.select_tracker + 1) % 1000000
 
-            if self.flash_tracker & self.flash_speed:
+            if self.select_tracker & self.select_speed:
                 tb_s = " " * (config.CARD_WIDTH + 2)
                 bot_y = y + config.CARD_HEIGHT + 1
 
@@ -88,7 +108,34 @@ class Card:
 
                     scr.addstr(lr_y, x, " ", colors.GREEN_BACK)
                     scr.addstr(lr_y, right_x, " ", colors.GREEN_BACK)
+        elif self.usable:
+            if self.section == 0:
+                self.u_x = self.u_x + 1
 
+                if self.u_x > config.CARD_WIDTH:
+                    self.section = 1
+            elif self.section == 1:
+                self.u_y += 1
+
+                if self.u_y > config.CARD_HEIGHT:
+                    self.section = 2
+            elif self.section == 2:
+                self.u_x = self.u_x - 1
+
+                if self.u_x == 0:
+                    self.section = 3
+            elif self.section == 3:
+                self.u_y -= 1
+
+                if self.u_y == 0:
+                    self.section = 0
+
+            if self.usable_bonus:
+                local_color = colors.YELLOW_BACK
+            else:
+                local_color = colors.GREEN_BACK
+
+            scr.addstr(y + self.u_y, x + self.u_x, " ", local_color)
 
 class Minion(Card):
     def __init__(self, attack:int, health:int, *args):
@@ -126,6 +173,21 @@ class Minion(Card):
             health_x = x + health_offset_x
 
             scr.addstr(health_y + config.OUTLINE_OFFSET_Y, health_x + config.OUTLINE_OFFSET_X, health_s, health_c)
+
+class Deck(Card):
+    def __init__(self):
+        super().__init__("", 0, None)
+
+    def draw(self, y:int, x:int, scr, colors, deck_len):
+        super().draw(y, x, scr, colors)
+
+        draw.rectangle(y + config.OUTLINE_OFFSET_Y, x + config.OUTLINE_OFFSET_X, config.CARD_WIDTH, config.CARD_HEIGHT, scr, colors.WHITE_BACK)
+
+        deck_ss = f"Deck: ({deck_len})"
+        deck_s = f"{deck_ss:^{config.CARD_WIDTH}}"
+        faction_y = y + config.DECK_OFFSET_Y
+
+        scr.addstr(faction_y + config.OUTLINE_OFFSET_Y, x + config.OUTLINE_OFFSET_X, deck_s, colors.WHITE_BACK)
 
 # Minions
 m_One_gen = Minion(1, 1, "One", 1, None).get_generator()

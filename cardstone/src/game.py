@@ -9,6 +9,8 @@ LEFT = 260
 RIGHT = 261
 ENTER = 10
 
+DEBUG = ""
+
 class Game:
     """
     states:
@@ -39,15 +41,66 @@ class Game:
         self.player.fill_board()
         self.enemy.fill_board()
 
+        self.state_str = "PLAYER TURN"
+
+        self.can_select = True
+        self.select_y = 0
+        self.select_x = 0
+        self.rows = [
+            self.enemy.hand
+            , self.enemy.board
+            , self.player.board
+            , self.player.hand
+        ]
+
+        # start selected at the player icon (only thing guaranteed to exist always)
+        self.select_y = 2
+        self.select_x = len(self.player.board) - 1
+
+        # for minion in self.enemy.board:
+        #     minion.set_usable_bonus(True)
+
     def update(self, key:int):
-        pass
+        change = False
+
+        if self.can_select:
+            cur_row = self.rows[self.select_y]
+            cur_obj = cur_row[self.select_x]
+            
+            if key == UP:
+                self.select_y = max(0, self.select_y - 1)
+                self.select_x = 0
+                change = True
+            elif key == DOWN:
+                self.select_y = min(3, self.select_y + 1)
+                self.select_x = 0
+                change = True
+            elif key == LEFT:
+                self.select_x = max(0, self.select_x - 1)
+                change = True
+            elif key == RIGHT:
+                self.select_x = min(len(cur_row), self.select_x + 1)
+                change = True
+
+            if change:
+                cur_obj.set_selected(False)
+
+                new_row = self.rows[self.select_y]
+                new_row[self.select_x].set_selected(True)
+                
 
     def draw(self, colors):
-
         # center
-        c_str = "■—" * int(config.WIDTH / 2)
+        c_s = "■—" * int(config.WIDTH / 2)
 
-        self.scr.addstr(22, 0, c_str, colors.WHITE_TEXT)
+        self.scr.addstr(config.CENTER_Y, 0, c_s, colors.WHITE_TEXT)
+        
+        mt_ss = f"== {self.state_str} =="
+        mt_s = f"{mt_ss:^{config.MID_TEXT_WIDTH}}"
+        mt_y = config.CENTER_Y
+        mt_x = config.MID_TEXT_PADDING
+
+        self.scr.addstr(mt_y, mt_x, mt_s, colors.BLACK_TEXT)
 
         ##########
         # PLAYER #
@@ -73,19 +126,7 @@ class Game:
         dy = config.PLAYER_BACK_Y
         dx = config.DECK_X
 
-        draw.rectangle(dy + config.OUTLINE_OFFSET_Y, dx + config.OUTLINE_OFFSET_X, config.CARD_WIDTH, config.CARD_HEIGHT, self.scr, self.player.card_back)
-
-        if self.player.card_back in [colors.WHITE_BACK]:
-            deck_text_color = colors.WHITE_TEXT
-        else:
-            deck_text_color = colors.BLACK_TEXT
-
-        dt_y = config.PLAYER_BACK_Y
-        dt_x = config.DECK_X
-        dt_ss = f"DECK [{len(self.player.deck)}]"
-        dt_s = f"{dt_ss:^{config.CARD_WIDTH}}"
-
-        self.scr.addstr(dt_y, dt_x + config.OUTLINE_OFFSET_X, dt_s, colors.WHITE_TEXT)
+        self.player.deck_card.draw(dy, dx, self.scr, colors, len(self.player.deck))
 
         ##########
         # ENEMY #
@@ -111,11 +152,4 @@ class Game:
         dy = config.ENEMY_BACK_Y
         dx = config.DECK_X
 
-        draw.rectangle(dy + config.OUTLINE_OFFSET_Y, dx + config.OUTLINE_OFFSET_X, config.CARD_WIDTH, config.CARD_HEIGHT, self.scr, self.enemy.card_back)
-
-        dt_y = config.ENEMY_BACK_Y
-        dt_x = config.DECK_X
-        dt_ss = f"DECK [{len(self.player.deck)}]"
-        dt_s = f"{dt_ss:^{config.CARD_WIDTH}}"
-
-        self.scr.addstr(dt_y, dt_x + config.OUTLINE_OFFSET_X, dt_s, colors.WHITE_TEXT)
+        self.enemy.deck_card.draw(dy, dx, self.scr, colors, len(self.enemy.deck))

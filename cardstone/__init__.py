@@ -17,21 +17,27 @@ def comp_actual_fps(s_time):
 
 def init_colors():
     curses.init_pair(1, curses.COLOR_BLACK, curses.COLOR_WHITE)
+    curses.init_pair(2, curses.COLOR_WHITE, curses.COLOR_BLACK)
     curses.init_pair(3, curses.COLOR_RED, curses.COLOR_WHITE)
     curses.init_pair(4, curses.COLOR_GREEN, curses.COLOR_WHITE)
     curses.init_pair(5, curses.COLOR_WHITE, curses.COLOR_GREEN)
-    curses.init_pair(6, curses.COLOR_WHITE, curses.COLOR_WHITE)
-    curses.init_pair(7, curses.COLOR_WHITE, curses.COLOR_BLACK)
+    curses.init_pair(6, curses.COLOR_WHITE, curses.COLOR_YELLOW)
 
     colors = ColorFrame()
     colors.BLACK_TEXT = curses.color_pair(1)
-    colors.GREEN_TEXT = curses.color_pair(4)
-    colors.RED_TEXT = curses.color_pair(3)
+    colors.WHITE_BACK = curses.color_pair(1)
+
     colors.WHITE_TEXT = curses.color_pair(2)
-    colors.WHITE_BACK = curses.color_pair(6)
-    colors.GREY_BACK = curses.color_pair(1) | curses.A_STANDOUT # black text, white background, standout -> grey background
+    colors.BLACK_BACK = curses.color_pair(2)
+
+    colors.RED_TEXT = curses.color_pair(3)
+    colors.GREEN_TEXT = curses.color_pair(4)
+
     colors.GREEN_BACK = curses.color_pair(5)
-    colors.BLACK_BACK = curses.color_pair(7)
+    colors.YELLOW_BACK = curses.color_pair(6)
+
+    colors.GREY_BACK = curses.color_pair(1) | curses.A_STANDOUT # black text, white background, standout -> grey background
+
 
     return colors
 
