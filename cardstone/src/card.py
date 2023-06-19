@@ -23,9 +23,9 @@ def stat_color_change(t_cur:int, t_max:int, colors, inverted:bool=False):
     return ret_b, c_list[ret_c]
 
 class Card:
-    def __init__(self, name:str, mana:int, faction:str):
+    def __init__(self, name:str, mana: str, faction:str):
         self.name = name
-        self.max_mana = mana
+        self.default_mana = mana
         self.cur_mana = mana
         self.faction = faction
 
@@ -53,7 +53,6 @@ class Card:
         self.usable = val
         self.usable_bonus = val
 
-
     def get_generator(self):
         while True:
             yield copy.deepcopy(self)
@@ -76,7 +75,7 @@ class Card:
         scr.addstr(title_y + config.OUTLINE_OFFSET_Y, title_x + config.OUTLINE_OFFSET_X, title_s, colors.BLACK_TEXT)
         scr.addstr(mana_y + config.OUTLINE_OFFSET_Y, mana_x + config.OUTLINE_OFFSET_X, mana_s, colors.BLACK_TEXT)
 
-        do_mana, mana_c = stat_color_change(self.cur_mana, self.max_mana, colors, inverted=True)
+        do_mana, mana_c = stat_color_change(self.cur_mana, self.default_mana, colors, inverted=True)
         if do_mana:
             mana_s = str(self.cur_mana)
             mana_y = y + config.MANA_OFFSET_Y
